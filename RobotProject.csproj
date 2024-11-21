@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    
     <Reference Include="Avans.StatisticalRobot">
       <HintPath>./StatisticalRobot-Lib.dll</HintPath>
     </Reference>
