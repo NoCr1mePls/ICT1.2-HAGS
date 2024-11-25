@@ -1,4 +1,4 @@
-using System.Device.I2c; //TODO check gyro and acceloerometer registers/ change if needed
+using System.Device.I2c;
 public static class ICM20600Constants
 {
     public const byte CONFIG = 0x1A;
