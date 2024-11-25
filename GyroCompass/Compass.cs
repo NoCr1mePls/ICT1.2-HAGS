@@ -1,8 +1,8 @@
 using System.Device.I2c;
 
-namespace AK09918Lib
+namespace GyroscopeCompass.Compass
 {
-    public enum AK09918Mode
+    public enum CompassMode
     {
         PowerDown = 0x00,
         SingleMeasurement = 0x01,
@@ -13,7 +13,7 @@ namespace AK09918Lib
         SelfTest = 0x10
     }
 
-    public enum AK09918Error
+    public enum CompassError
     {
         Ok,
         DataSkipped,
@@ -25,60 +25,74 @@ namespace AK09918Lib
         ReadFailed
     }
 
-    public class AK09918
+    /// <summary>
+    /// Class to interact with the AK09918 Electronic compass.
+    /// Provides methods for initialization, configuration, and data retrieval.
+    /// </summary>
+    public class Magnetometer(I2cDevice device)
     {
         private const byte DeviceAddress = 0x0C;
 
         private const byte RegisterST1 = 0x10;
         private const byte RegisterHXL = 0x11;
-        private const byte RegisterST2 = 0x18;
         private const byte RegisterCNTL2 = 0x31;
-        private const byte RegisterCNTL3 = 0x32;
+        private I2cDevice _i2cDevice = device;
+        private CompassMode _currentMode = CompassMode.PowerDown;
 
-        private I2cDevice _i2cDevice;
-        private AK09918Mode _currentMode;
-
-        public AK09918(I2cDevice device)
+        /// <summary>
+        /// Initializes the compass with the specified mode.
+        /// </summary>
+        /// <param name="mode">The mode in which the compass gets initialized.</param>
+        /// <returns>If the process was succesfull or what the error is.</returns>
+        public CompassError Initialize(CompassMode mode)
         {
-
-            _i2cDevice = device;
-            _currentMode = AK09918Mode.PowerDown;
-        }
-
-        public AK09918Error Initialize(AK09918Mode mode)
-        {
-            if (SwitchMode(mode) != AK09918Error.Ok)
+            if (SwitchMode(mode) != CompassError.Ok)
             {
-                return AK09918Error.WriteFailed;
+                return CompassError.WriteFailed;
             }
 
             Thread.Sleep(100); // Wait for the sensor to be ready
-            return AK09918Error.Ok;
+            return CompassError.Ok;
         }
 
-
-        public AK09918Error SwitchMode(AK09918Mode mode)
+        /// <summary>
+        /// Configures the mode of the sensor.
+        /// </summary>
+        /// <param name="mode">The mode to which the compass needs to be switched to.</param>
+        /// <returns>If the process was succesfull or what the error is.</returns>
+        public CompassError SwitchMode(CompassMode mode)
         {
-            if (!I2CWriteByte(RegisterCNTL2, (byte)mode))
+            if (!WriteByte(RegisterCNTL2, (byte)mode))
             {
-                return AK09918Error.WriteFailed;
+                return CompassError.WriteFailed;
             }
 
             _currentMode = mode;
-            return AK09918Error.Ok;
+            return CompassError.Ok;
         }
 
-        public AK09918Error IsDataReady()
+        /// <summary>
+        /// Checks if the data is ready to be read.
+        /// </summary>
+        /// <returns>If the process was succesfull or what the error is.</returns>
+        public CompassError IsDataReady()
         {
-            if (!I2CReadByte(RegisterST1, out byte data))
+            if (!ReadByte(RegisterST1, out byte data))
             {
-                return AK09918Error.ReadFailed;
+                return CompassError.ReadFailed;
             }
 
-            return (data & 0x01) != 0 ? AK09918Error.Ok : AK09918Error.NotReady;
+            return (data & 0x01) != 0 ? CompassError.Ok : CompassError.NotReady;
         }
 
-        public AK09918Error GetMagnetData(out float x, out float y, out float z)
+        /// <summary>
+        /// Reads the magnetometer data from the sensor.
+        /// </summary>
+        /// <param name="x">Returns the x-axis value scaled.</param>
+        /// <param name="y">Returns the y-axis value scaled.</param>
+        /// <param name="z">Returns the z-axis value scaled.</param>
+        /// <returns>If the process was succesfull or what the error is.</returns>
+        public CompassError GetMagnetData(out float x, out float y, out float z)
         {
             x = y = z = 0;
 
@@ -86,21 +100,21 @@ namespace AK09918Lib
             for (int i = 0; i < 10; i++) // Retry 10 times
             {
                 var status = IsDataReady();
-                if (status == AK09918Error.Ok)
+                if (status == CompassError.Ok)
                 {
                     break;
                 }
                 else if (i == 9) // Timeout
                 {
-                    return AK09918Error.Timeout;
+                    return CompassError.Timeout;
                 }
                 Thread.Sleep(10); // Wait before retrying
             }
 
             // Read data
-            if (!I2CReadBytes(RegisterHXL, out byte[] buffer, 8)) // Read 8 bytes starting from HXL
+            if (!ReadBytes(RegisterHXL, out byte[] buffer, 8)) // Read 8 bytes starting from HXL
             {
-                return AK09918Error.ReadFailed;
+                return CompassError.ReadFailed;
             }
 
             // Combine high and low bytes for each axis
@@ -109,21 +123,21 @@ namespace AK09918Lib
             int rawZ = (short)((buffer[5] << 8) | buffer[4]); // Combine HZH and HZL
 
             // Scale raw data to µT and round to 2 decimal places
-            x = (float)Math.Round(rawX * 0.15f,2);
-            y = (float)Math.Round(rawY * 0.15f,2);
-            z = (float)Math.Round(rawZ * 0.15f,2);
+            x = (float)Math.Round(rawX * 0.15f, 2);
+            y = (float)Math.Round(rawY * 0.15f, 2);
+            z = (float)Math.Round(rawZ * 0.15f, 2);
 
             // Check for overflow
             if ((buffer[7] & 0x08) != 0) // HOFL bit
             {
-                return AK09918Error.Overflow;
+                return CompassError.Overflow;
             }
 
-            return AK09918Error.Ok;
+            return CompassError.Ok;
         }
 
 
-        private bool I2CWriteByte(byte register, byte value)
+        private bool WriteByte(byte register, byte value)
         {
             try
             {
@@ -137,7 +151,7 @@ namespace AK09918Lib
             }
         }
 
-        private bool I2CReadByte(byte register, out byte value)
+        private bool ReadByte(byte register, out byte value)
         {
             try
             {
@@ -153,7 +167,7 @@ namespace AK09918Lib
             }
         }
 
-        private bool I2CReadBytes(byte register, byte[] buffer, int offset, int length)
+        private bool ReadBytes(byte register, byte[] buffer, int offset, int length)
         {
             try
             {
@@ -171,10 +185,10 @@ namespace AK09918Lib
             }
         }
 
-        private bool I2CReadBytes(byte register, out byte[] buffer, int length)
+        private bool ReadBytes(byte register, out byte[] buffer, int length)
         {
             buffer = new byte[length];
-            return I2CReadBytes(register, buffer, 0, length);
+            return ReadBytes(register, buffer, 0, length);
         }
     }
 }
