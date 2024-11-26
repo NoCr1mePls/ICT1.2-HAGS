@@ -14,13 +14,13 @@ namespace GyroscopeCompass.Gyroscope
         public const byte GYRO_CONFIG = 0x1B;
         public const byte GYRO_LP_MODE_CFG = 0x1E;
         public const byte SMPLRT_DIV = 0x19;
-        // public const byte ACCEL_XOUT_H = 0x3B; THIS ARE THE ORIGINAL VALUES
+        // public const byte ACCEL_XOUT_H = 0x3B; THESE ARE THE ORIGINAL VALUES AND SHOULD NOT BE ALTERED
         // public const byte ACCEL_YOUT_H = 0x3D;
         // public const byte ACCEL_ZOUT_H = 0x3F;
         // public const byte GYRO_XOUT_H = 0x43;
         // public const byte GYRO_YOUT_H = 0x45;
         // public const byte GYRO_ZOUT_H = 0x47;
-        public const byte ACCEL_XOUT_H = 0x43;
+        public const byte ACCEL_XOUT_H = 0x43; // There seems to be either a documentation error or a hardware error where the registers are not correct
         public const byte ACCEL_YOUT_H = 0x45;
         public const byte ACCEL_ZOUT_H = 0x47;
         public const byte GYRO_XOUT_H = 0x3B;

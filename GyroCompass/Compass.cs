@@ -5,7 +5,7 @@ namespace GyroscopeCompass.Compass
     public enum CompassMode
     {
         PowerDown = 0x00,
-        SingleMeasurement = 0x01,
+        SingleMeasurement = 0x01,   
         Continuous10Hz = 0x02,
         Continuous20Hz = 0x04,
         Continuous50Hz = 0x06,
