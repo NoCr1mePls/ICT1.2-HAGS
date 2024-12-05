@@ -1,22 +1,16 @@
-using System;
-using System.Device.Gpio;
-using System.Device.I2c;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Avans.StatisticalRobot;
-using System.Device.Pwm;
+using GyroscopeCompass.GyroscopeCompass;
 using Speaker;
 
 class Program
 {
 
-    static async Task Main(string[] args)
+    static void Main(string[] args)
     {
 
         Console.WriteLine("Starting...");
-        var endsongPlayer = new WavSpeaker("/mnt/usb/Endsong.wav", false);
-        var sadPlayer = new WavSpeaker("/mnt/usb/Sad.wav", true);
+        var jonkler = new WavSpeaker("/mnt/usb/Fein.wav", false);
+        var caretaker = new WavSpeaker("/mnt/usb/Caretaker.wav", true);
         Ultrasonic ultra = new(5);
         bool isInRange = false;
         Console.WriteLine("Ready");
@@ -32,8 +26,8 @@ class Program
                     if (!isInRange)
                     {
                         isInRange = true;
-                        endsongPlayer.Stop();
-                        sadPlayer.PlayAsync();
+                        jonkler.Stop();
+                        _ = caretaker.PlayAsync();
                     }
                 }
                 else
@@ -41,8 +35,8 @@ class Program
                     if (isInRange)
                     {
                         isInRange = false;
-                        endsongPlayer.PlayAsync();
-                        sadPlayer.Stop();
+                        _ = jonkler.PlayAsync();
+                        caretaker.Stop();
                     }
                 }
             }
