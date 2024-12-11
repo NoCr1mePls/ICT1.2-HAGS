@@ -1,46 +1,37 @@
 using Avans.StatisticalRobot;
 using GyroscopeCompass.GyroscopeCompass;
+using Hardware.Touchpad;
 using Speaker;
 
 class Program
 {
-
     static void Main(string[] args)
     {
-
         Console.WriteLine("Starting...");
-        var jonkler = new WavSpeaker("/mnt/usb/Fein.wav", false);
-        var caretaker = new WavSpeaker("/mnt/usb/Caretaker.wav", true);
-        Ultrasonic ultra = new(5);
-        bool isInRange = false;
+        var jonkler = new WavSpeaker("/mnt/usb/Jonkler.wav", false);
+        var sad = new WavSpeaker("/mnt/usb/Sad.wav", true);
+        var pad = new Touchpad();
+        pad.OpenPort();
         Console.WriteLine("Ready");
-        while (true)
-        {
-            var distance = ultra.GetUltrasoneDistance();
-            Console.WriteLine($"Distance: {distance} cm");
-            if (distance > 0)
-            {
-
-                if (distance <= 12)
-                {
-                    if (!isInRange)
-                    {
-                        isInRange = true;
-                        jonkler.Stop();
-                        _ = caretaker.PlayAsync();
-                    }
-                }
-                else
-                {
-                    if (isInRange)
-                    {
-                        isInRange = false;
-                        _ = jonkler.PlayAsync();
-                        caretaker.Stop();
-                    }
+        while (true){
+            var data = pad.ReadData();
+            if(data != 0){
+                switch(data){
+                    case TouchpadKey.One:
+                    jonkler.PlayAsync();
+                    break;
+                    case TouchpadKey.Two:
+                    sad.PlayAsync();
+                    break;
+                    case TouchpadKey.Three:
+                    jonkler.Stop();
+                    sad.Stop();
+                    break;
+                    case TouchpadKey.Four:
+                    pad.ClosePort();
+                    return;
                 }
             }
-            Robot.Wait(1);
         }
     }
 }

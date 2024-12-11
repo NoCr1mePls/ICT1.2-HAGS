@@ -1,5 +1,4 @@
 using System.Device.I2c;
-
 namespace GyroscopeCompass.Compass
 {
     public enum CompassMode
@@ -31,8 +30,6 @@ namespace GyroscopeCompass.Compass
     /// </summary>
     public class Magnetometer(I2cDevice device)
     {
-        private const byte DeviceAddress = 0x0C;
-
         private const byte RegisterST1 = 0x10;
         private const byte RegisterHXL = 0x11;
         private const byte RegisterCNTL2 = 0x31;

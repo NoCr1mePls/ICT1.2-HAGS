@@ -3,7 +3,6 @@ using GyroscopeCompass.Compass;
 using Avans.StatisticalRobot;
 using System.Device.I2c;
 
-// TODO Write documentation
 namespace GyroscopeCompass.GyroscopeCompass
 {
     public enum PerformanceMode
@@ -22,7 +21,7 @@ namespace GyroscopeCompass.GyroscopeCompass
     public class GyroCompass
     {
         private Gyro gyro;
-        private Magnetometer compass;
+        private readonly Magnetometer compass;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GyroCompass"/> class.

@@ -2,7 +2,12 @@ using System.Text;
 using Avans.StatisticalRobot;
 
 namespace Speaker
-{
+{   
+    /// <summary>
+    /// This class reads a 16-bit WAV file.
+    /// The initialisation and preloading of the duty cycle which is needed for the play method gets done in the constructor
+    /// to avoid loading when playing is needed.
+    /// </summary>
     public class WavSpeaker
     {
         private readonly int _sampleRate;
@@ -11,7 +16,7 @@ namespace Speaker
         private readonly bool _negativeSampleRate;
         private CancellationTokenSource? _cancellationTokenSource = null;
 
-        public WavSpeaker(string wavFilePath, bool negativeSampleRate)
+        public WavSpeaker(string wavFilePath, bool negativeSampleRate) //The negative sample rate is for sample rates specified in headers that dont match the actual sample rate (this is mainly added after wrongly prepping my files)
         {
             // Parse the WAV file and extract audio data
             using var stream = new FileStream(wavFilePath, FileMode.Open, FileAccess.Read);
@@ -98,17 +103,28 @@ namespace Speaker
             _negativeSampleRate = negativeSampleRate;
         }
 
+        /// <summary>
+        /// This method plays the preloaded file on another thread.
+        /// </summary>
+        /// <returns></returns>
         public async Task PlayAsync()
         {
             _cancellationTokenSource = new CancellationTokenSource();
             await Task.Run(() => Play(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
         }
 
+        /// <summary>
+        /// This method stops the playing.
+        /// </summary>
         public void Stop()
         {
             _cancellationTokenSource?.Cancel();
         }
 
+        /// <summary>
+        /// This method plays the song to the pwm pin prespecified by the Avans.StatisticalRobot class.
+        /// </summary>
+        /// <param name="cancellationToken">The token that tethers the play method.</param>
         private void Play(CancellationToken cancellationToken)
         {
             // Initialize PWM with the correct sample rate
