@@ -1,81 +1,50 @@
 using System;
 using System.Device.Gpio;
 using System.IO.Ports;
-namespace Hardware.Touchpad{
-    public enum TouchpadKey{
-        One = 0xE1,
-        Two = 0xE2,
-        Three = 0xE3,
-        Four = 0xE4,
-        Five = 0xE5,
-        Six = 0xE6,
-        Seven = 0xE7,
-        Eight = 0xE8,
-        Nine = 0xE9,
-        Star = 0xEA,
-        Zero = 0xEB,
-        Hash = 0xEC
-    }
+namespace Hardware.Touchpad
+{
     class Touchpad
     {
-        static SerialPort serialPort;
+        static SerialPort? serialPort;
 
-        public Touchpad()
+        public static char ReadData()
         {
-            // Initialize the serial port
-            serialPort = new SerialPort("/dev/ttyAMA0", 9600);
-        }
-
-        public TouchpadKey ReadData()
-        {  
-            if (serialPort.BytesToRead > 0)
+            if (serialPort != null && serialPort.BytesToRead > 0)
             {
                 int data = serialPort.ReadByte();
-                switch (data)
+                return data switch
                 {
-                    case 0xE1:
-                        return TouchpadKey.One;
-                    case 0xE2:
-                        return TouchpadKey.Two;
-                    case 0xE3:
-                        return TouchpadKey.Three;
-                    case 0xE4:
-                        return TouchpadKey.Four;
-                    case 0xE5:
-                        return TouchpadKey.Five;
-                    case 0xE6:
-                        return TouchpadKey.Six;
-                    case 0xE7:
-                        return TouchpadKey.Seven;
-                    case 0xE8:
-                        return TouchpadKey.Eight;
-                    case 0xE9:
-                        return TouchpadKey.Nine;
-                    case 0xEA:
-                        return TouchpadKey.Star;
-                    case 0xEB:
-                        return TouchpadKey.Zero;
-                    case 0xEC:
-                        return TouchpadKey.Hash;
-                    default:
-                        return 0;
-                }
+                    0xE1 => '1',
+                    0xE2 => '2',
+                    0xE3 => '3',
+                    0xE4 => '4',
+                    0xE5 => '5',
+                    0xE6 => '6',
+                    0xE7 => '7',
+                    0xE8 => '8',
+                    0xE9 => '9',
+                    0xEA => '*',
+                    0xEB => '0',
+                    0xEC => '#',
+                    _ => ' ',
+                };
             }
-            return 0;
+            return ' ';
 
         }
-        public void ClosePort()
+        public static void ClosePort()
         {
-            serialPort.Close();
+            serialPort?.Close();
         }
 
-        public void OpenPort()
+        public static void OpenPort()
         {
-            serialPort.Open();
+            serialPort = new SerialPort("/dev/ttyAMA0", 9600);
+            serialPort?.Open();
         }
-        public void PrintData()
+        public static void PrintData()
         {
-            if (serialPort.BytesToRead > 0)
+            if (serialPort != null && serialPort.BytesToRead > 0)
             {
                 int data = serialPort.ReadByte();
                 switch (data)
