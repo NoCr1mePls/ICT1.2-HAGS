@@ -13,6 +13,13 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"type": "dotnet",
+			"task": "build",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build"
 		}
 	]
 }

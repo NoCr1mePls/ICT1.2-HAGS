@@ -1,5 +1,3 @@
-using System;
-using System.Device.Gpio;
 using System.IO.Ports;
 namespace Hardware.Touchpad
 {

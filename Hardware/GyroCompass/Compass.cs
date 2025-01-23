@@ -1,5 +1,5 @@
 using System.Device.I2c;
-namespace GyroscopeCompass.Compass
+namespace RobotProject.Hardware.GyroCompass
 {
     public enum CompassMode
     {

@@ -26,9 +26,11 @@ I personally use a usb. Because its linux you'll have to manually mount the usb.
 3. Connect to the bot through ssh via the following command `ssh rompi@[The IP of your bot on the shared network, this can be found in the bot console] 
 4. When connected type `lsblk` to find the location of the usb on the bot, in most cases its `sda1`
 5. Make a map under the directory `/mnt/` named `usb`
-6. Mount the usb with the command `sudo mount /dev/sda1 /mnt/usb
-7. The location of the files is `/mnt/usb/[File path to the file on your usb]
+6. Mount the usb with the command `sudo mount /dev/sda1 /mnt/usb`
+7. The location of the files is `/mnt/usb/[File path to the file on your usb]`
 
 ### Final
 When the usb is mounted and the 16-bit wav file is located you can use the class's start and stop function. 
 Again: The files get preloaded on initialisation. This means it takes a while to continue.
+
+It is recommended to solely use the `PlayAsync();` and `Stop();` method.

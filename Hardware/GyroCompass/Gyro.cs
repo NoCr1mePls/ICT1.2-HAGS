@@ -1,5 +1,5 @@
 using System.Device.I2c;
-namespace GyroscopeCompass.Gyroscope
+namespace RobotProject.Hardware.GyroCompass
 {
 
     public static class GyroConstants
@@ -25,7 +25,7 @@ namespace GyroscopeCompass.Gyroscope
         public const byte ACCEL_ZOUT_H = 0x47;
         public const byte GYRO_XOUT_H = 0x3B;
         public const byte GYRO_YOUT_H = 0x3D;
-        public const byte GYRO_ZOUT_H = 0x4F;
+        public const byte GYRO_ZOUT_H = 0x3F;
 
         //Preserve V
         public const byte TEMP_OUT_H = 0x41;

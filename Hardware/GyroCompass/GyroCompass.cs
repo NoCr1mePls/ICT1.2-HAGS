@@ -1,9 +1,7 @@
-using GyroscopeCompass.Gyroscope;
-using GyroscopeCompass.Compass;
 using Avans.StatisticalRobot;
 using System.Device.I2c;
 
-namespace GyroscopeCompass.GyroscopeCompass
+namespace RobotProject.Hardware.GyroCompass
 {
     public enum PerformanceMode
     {
@@ -30,7 +28,7 @@ namespace GyroscopeCompass.GyroscopeCompass
         /// </summary>
         public GyroCompass()
         {
-            gyro = new Gyroscope.Gyro(OccupiedId(0x68) ? Robot.CreateI2cDevice(0x68) : Robot.CreateI2cDevice(0x69));
+            gyro = new Gyro(OccupiedId(0x68) ? Robot.CreateI2cDevice(0x68) : Robot.CreateI2cDevice(0x69));
             compass = new Magnetometer(Robot.CreateI2cDevice(0x0c));
             gyro.Initialize();
             compass.Initialize(CompassMode.Continuous100Hz);
