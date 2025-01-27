@@ -2,7 +2,7 @@ using RobotProject.Managers;
 
 namespace RobotProject.Detection
 {
-    public class CrashDetection
+    public class CrashDetection : IDetection
     {
         private int _distance;
         private UltrasonicManger _ultrasonicManger;

@@ -25,9 +25,34 @@ namespace RobotProject.Managers
         {
             Robot.Motors((short)((int)speed * -1), (short)speed);
         }
+
+        public void LeftTurn()
+        {
+            var timer = new System.Timers.Timer(750);
+            timer.Start();
+            TurnLeft();
+            timer.Elapsed += (sender, e) =>
+            {
+                MoveForward();
+                timer.Stop();
+                timer.Dispose();
+            };
+        }
         public void TurnRight()
         {
             Robot.Motors((short)speed, (short)((int)speed * -1));
+        }
+
+        public void RightTurn(){
+            var timer = new System.Timers.Timer(750);
+            timer.Start();
+            TurnRight();
+            timer.Elapsed += (sender, e) =>
+            {
+                MoveForward();
+                timer.Stop();
+                timer.Dispose();
+            };
         }
         public void Stop()
         {

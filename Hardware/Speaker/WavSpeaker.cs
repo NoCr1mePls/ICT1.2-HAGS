@@ -16,7 +16,7 @@ namespace Speaker
         private readonly bool _negativeSampleRate;
         private CancellationTokenSource? _cancellationTokenSource = null;
 
-        public WavSpeaker(string wavFilePath, bool negativeSampleRate) //The negative sample rate is for sample rates specified in headers that dont match the actual sample rate (this is mainly added after wrongly prepping my files)
+        public WavSpeaker(string wavFilePath, bool negativeSampleRate = true) //The negative sample rate is for sample rates specified in headers that dont match the actual sample rate (this is mainly added after wrongly prepping my files)
         {
             // Parse the WAV file and extract audio data
             using var stream = new FileStream(wavFilePath, FileMode.Open, FileAccess.Read);
@@ -77,8 +77,7 @@ namespace Speaker
                 throw new InvalidDataException("Unexpected end of file while reading audio data.");
 
             // Assuming the sample rate is stored in a variable called _sampleRate
-            Console.WriteLine($"Sample Rate: {_sampleRate}");
-            Console.WriteLine($"Data Size: {dataSize}");
+            Console.WriteLine($"Loaded: {wavFilePath}\nSample Rate: {_sampleRate}\nData Size: {dataSize}");
 
             // Read audio data
             _audioData = new short[dataSize / 2];
