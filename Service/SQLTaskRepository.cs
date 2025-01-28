@@ -2,9 +2,11 @@ using Microsoft.Data.SqlClient;
 using RobotProject.Client;
 namespace RobotProject.Service
 {
-    public class SQLTaskRepository
+    public class SQLTaskRepository(string connectionString)
     {
-        public static void SaveTask(ClientTask task)
+        private string _connectionString = connectionString;
+
+        public void SaveTask(ClientTask task)
         {
             using SqlConnection connection = new(_connectionString);
             connection.Open();
@@ -18,7 +20,7 @@ namespace RobotProject.Service
             connection.Close();
         }
 
-        public static List<ClientTask> GetAllTasks()
+        public List<ClientTask> GetAllTasks()
         {
             using SqlConnection connection = new(_connectionString);
             connection.Open();
@@ -39,9 +41,8 @@ namespace RobotProject.Service
             return tasks;
         }
 
-        public static void EmptyTable()
+        public void EmptyTable()
         {
-            string _connectionString = "Server= aei-sql2.avans.nl,1443; Database= DB2199319; UID= ITI2199319; password= X2rpI6G1; TrustServerCertificate= True;";
             using SqlConnection connection = new(_connectionString);
             connection.Open();
             using SqlCommand command = new("DELETE FROM ClientTask", connection);

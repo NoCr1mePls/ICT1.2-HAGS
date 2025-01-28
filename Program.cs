@@ -6,10 +6,15 @@ using Avans.StatisticalRobot;
 using RobotProject.Service;
 using RobotProject.Client;
 using Speaker;
+using Microsoft.Extensions.Configuration;
 class Program
 {
     static void Main(string[] args)
-    {                                           //Initialisation to inform the user that the robot is starting up
+    {
+        IConfigurationRoot config = new ConfigurationBuilder() //get the connection string from the user secrets
+        .AddUserSecrets<Program>()
+        .Build();
+        //Initialisation to inform the user that the robot is starting up
         LCD16x2 screen = new(0x3E);                                                                                //0x3E is the I2C adress 
         Console.Clear();
         Console.WriteLine("Starting up...");
@@ -24,7 +29,7 @@ class Program
             new SuddenMotionDetection(gyro),    //2
             new CrashDetection(10, 18, 16)      //3                                                                //10 is the distance, 18 pin of front ultrasonic, 16 pin of right ultrasonic
         ];
-        List<ClientTask> tasks = SQLTaskRepository.GetAllTasks();
+        List<ClientTask> tasks = new SQLTaskRepository(config["ConnectionString"]).GetAllTasks();
         Touchpad.OpenPort();
         bool isRunning = false;
         bool isTurning = false;
@@ -51,7 +56,7 @@ class Program
             {
                 for (int i = 0; i < (detections.Length - 1); i++) //Check for all detection systems (except the crash detection) if an interruption gets detected
                 {
-                    if (detections[i].Detect() == 1) 
+                    if (detections[i].Detect() == 1)
                     {
                         Console.WriteLine($"Error detected by: {detections[i].GetType().Name}");
                         motorManager.Stop();
